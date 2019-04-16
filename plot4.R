@@ -1,0 +1,36 @@
+#Read data file
+setwd("C:/Users/Diego.GarciaLopez/Google Drive/Coursera/Course 4 - Exploratory Data Analysis/")
+dataFile <- "./data/household_power_consumption.txt"
+data <- read.table(dataFile, header=TRUE, sep=";", stringsAsFactors=FALSE, dec=".",na.strings="?")
+datafiltered <- data[data$Date %in% c("1/2/2007","2/2/2007") ,]
+
+##Convert values for plot as numeric
+datafiltered$Global_active_power <- as.numeric(datafiltered$Global_active_power)
+datafiltered$Sub_metering_1 <- as.numeric(datafiltered$Sub_metering_1)
+datafiltered$Sub_metering_2 <- as.numeric(datafiltered$Sub_metering_2)
+datafiltered$Sub_metering_3 <- as.numeric(datafiltered$Sub_metering_3)
+
+##Format Date
+datafiltered$Date <- as.Date(datafiltered$Date,format = "%d/%m/%Y")
+datafiltered$DateTime <-as.POSIXct(paste(as.Date(datafiltered$Date),datafiltered$Time))
+
+
+
+##plot graph into png file 480 by 480 pixels
+png("plot4.png",width = 480,height = 480)
+
+#setup layout
+par(mfrow=c(2,2), mar=c(4,4,2,1), oma=c(0,0,2,0))
+
+plot(datafiltered$Global_active_power~datafiltered$DateTime, type="l",ylab="Global Active Power (kilowatts)", xlab="")
+plot(datafiltered$Voltage~datafiltered$DateTime, type="l",ylab="Voltage (volt)", xlab="")
+plot(datafiltered$Sub_metering_1~datafiltered$DateTime, type="l",ylab="Global Active Power (kilowatts)", xlab="")
+  ## add two more lines 
+  lines(datafiltered$Sub_metering_2~datafiltered$DateTime,col='Red')
+  lines(datafiltered$Sub_metering_3~datafiltered$DateTime,col='Blue')
+  ## add legend
+  legend("topright", col=c("black", "red", "blue"), lty=1, lwd=2, bty="n",legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
+
+plot(datafiltered$Global_reactive_power~datafiltered$DateTime, type="l",ylab="Global Rective Power (kilowatts)",xlab="")
+
+dev.off()
